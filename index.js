@@ -17,6 +17,37 @@ canvas.height = canvasHeight * dpr;
 
 ctx.scale(dpr, dpr);
 
+// 특정값 테스트하기
+const gui = new dat.GUI();
+
+const f1 = gui.addFolder("Gooey Effect"); // 값 구분할 폴더 생성
+const f2 = gui.addFolder("Particle Property");
+f1.open(); // 폴더 열어두기
+f2.open();
+
+const controls = new (function () {
+  this.blurValue = 40; // 기본값 세팅
+  this.alphaChannel = 100;
+  this.alphaOffset = -23;
+  this.acc = 1.03;
+})();
+
+const feGaussianBlur = document.querySelector("feGaussianBlur");
+const feColorMatrix = document.querySelector("feColorMatrix");
+
+f1.add(controls, "blurValue", 0, 100).onChange((value) => {
+  feGaussianBlur.setAttribute("stdDeviation", value);
+});
+f1.add(controls, "alphaChannel", 1, 200).onChange((value) => {
+  feColorMatrix.setAttribute("values", `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${value} ${controls.alphaOffset}`);
+});
+f1.add(controls, "alphaOffset", -40, 40).onChange((value) => {
+  feColorMatrix.setAttribute("values", `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${controls.alphaChannel} ${value}`);
+});
+f2.add(controls, "acc", 1, 1.5, 0.01).onChange((value) => {
+  particles.forEach((particle) => (particle.acc = value));
+});
+
 // 사각형 그리기
 //ctx.fillRect(0, 0, 100, 100); // x,y,가로,세로
 

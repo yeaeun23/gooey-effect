@@ -27,8 +27,10 @@ class Particle {
     this.y = y;
     this.radius = radius;
     this.vy = vy;
+    this.acc = 1.03;
   }
   update() {
+    this.vy *= this.acc;
     this.y += this.vy;
   }
   draw() {
@@ -46,7 +48,7 @@ const randomNumBetween = (min, max) => {
 };
 
 let particles = []; // 원 담을 배열
-const TOTAL = 3; // 원 개수
+const TOTAL = 20; // 원 개수
 
 for (let i = 0; i < TOTAL; i++) {
   const x = randomNumBetween(0, canvasWidth); // 원 중심 x좌표

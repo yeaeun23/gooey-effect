@@ -2,20 +2,39 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const dpr = window.devicePixelRatio; // 2
 
-const canvasWidth = innerWidth;
-const canvasHeight = innerHeight;
+let canvasWidth, canvasHeight, particles;
 
-// 브라우저에서의 디스플레이 크기
-// 화면에 보이는 캔버스의 크기를 변경
-canvas.style.width = canvasWidth + "px";
-canvas.style.height = canvasHeight + "px";
+function init() {
+  canvasWidth = innerWidth;
+  canvasHeight = innerHeight;
 
-// 캔버스의 내부 해상도
-// 드로잉 영역의 크기와 해상도를 변경
-canvas.width = canvasWidth * dpr; // 600
-canvas.height = canvasHeight * dpr;
+  // 브라우저에서의 디스플레이 크기
+  // 화면에 보이는 캔버스의 크기를 변경
+  canvas.style.width = canvasWidth + "px";
+  canvas.style.height = canvasHeight + "px";
 
-ctx.scale(dpr, dpr);
+  // 캔버스의 내부 해상도
+  // 드로잉 영역의 크기와 해상도를 변경
+  canvas.width = canvasWidth * dpr; // 600
+  canvas.height = canvasHeight * dpr;
+
+  ctx.scale(dpr, dpr);
+
+  // 원 생성하기
+  particles = []; // 원 담을 배열
+
+  const TOTAL = canvasWidth / 10; // 화면 크기에 따른 원 개수
+
+  for (let i = 0; i < TOTAL; i++) {
+    const x = randomNumBetween(0, canvasWidth); // 원 중심 x좌표
+    const y = randomNumBetween(0, canvasHeight); // 원 중심 y좌표
+    const radius = randomNumBetween(50, 100); // 원 반지름
+    const vy = randomNumBetween(1, 5); // 원 떨어지는 속도
+
+    const particle = new Particle(x, y, radius, vy);
+    particles.push(particle);
+  }
+}
 
 // 특정값 테스트하기
 const gui = new dat.GUI();
@@ -78,19 +97,6 @@ const randomNumBetween = (min, max) => {
   return Math.random() * (max + 1 - min) + min;
 };
 
-let particles = []; // 원 담을 배열
-const TOTAL = 20; // 원 개수
-
-for (let i = 0; i < TOTAL; i++) {
-  const x = randomNumBetween(0, canvasWidth); // 원 중심 x좌표
-  const y = randomNumBetween(0, canvasHeight); // 원 중심 y좌표
-  const radius = randomNumBetween(50, 100); // 원 반지름
-  const vy = randomNumBetween(1, 5); // 원 떨어지는 속도
-
-  const particle = new Particle(x, y, radius, vy);
-  particles.push(particle);
-}
-
 const fps = 60;
 let interval = 1000 / fps; // 16ms
 let now, delta;
@@ -129,4 +135,11 @@ function animate() {
   then = now - (delta % interval);
 }
 
-animate();
+window.addEventListener("load", () => {
+  init();
+  animate();
+});
+
+window.addEventListener("resize", () => {
+  init();
+});
